@@ -1,0 +1,82 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: #ffffff;
+    font-family: sans-serif;
+    border-top: 3px solid blue;
+}
+
+.container {
+    padding: 50px 5%;
+}
+
+.title {
+    margin: 0;
+    font-family: 'bw_beto_grandelight', serif;
+    font-size: 100px;
+    font-weight: 100;
+    color: blue;
+    letter-spacing: -3px;
+    margin-left: -10px;
+}
+
+.subheading {
+    color: gainsboro;
+    font-size: 16px;
+    font-weight: 100;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+}
+
+.ibd-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 20px 20px;
+}
+
+.ibd-item {
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.ibd-item .img {
+    height: 220px;
+    display: block;
+}
+.ibd-item .img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.img-title {
+    padding: 15px;
+    border-top: 2px solid blue;
+}
+.img-title h4 {
+    color: blue;
+    font-size: 21px;
+    font-weight: 400;
+    margin: 0;
+}
+
+/* -------------------------- MEDIA QUERIES - SMALLER SCREENS -------------------------*/
+@media screen and (max-width: 768px) {
+    .title {
+        font-size: 18vw;
+    }
+    .subheading {
+        font-size: 20px;
+    }
+    .ibd-container {
+        grid-template-columns: 1fr;
+    }
+}

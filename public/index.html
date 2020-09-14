@@ -1,10 +1,31 @@
 <!doctype html>
 <html>
 <head>
-    <title></title>
+    <title>Imageboard 2020</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/fonts.css">
 </head>
 <body>
+    <div class="container">
+        <h1 class="title">Thoughts</h1>
+        <main>
+            <h2 class="subheading">{{ heading }}</h2>
+            <div class="ibd-container" v-if='images.length > 0'> <!-- pass an expression in the string -->
+                <div class="ibd-item" v-for='latestImgs in images'>
+                    <div class="img">
+                        <img :src="latestImgs.url" :alt="latestImgs.title" />
+                    </div>
+                    <div class="img-title">
+                        <h4>{{ latestImgs.title }}</h4>
+                    </div>  
+                </div>
+            </div>
+            <div v-else>No images to display.</div>
+        </main>
+    </div>
     <script src="/js/vue.js"></script>
     <script src="/js/axios.min.js"></script>
+    <script src="/js/script.js"></script>
 </body>
 </html>
