@@ -11,8 +11,17 @@
         <h1 class="title">Thoughts</h1>
         <main>
             <h2 class="subheading">{{ heading }}</h2>
+            <form>
+                <input v-modal="title" type="text" name="title" placeholder="Title">
+                <input v-modal="desc" type="text" name="desc" placeholder="Description">
+                <input v-modal="username" type="text" name="username" placeholder="Username">
+                <label for="file">Choose a file</label>
+                <input @change="handleChange" type="file" name="file" id="file" accept="image/*">
+                <button @click="handleClick">Submit</button>
+            </form>
             <div class="ibd-container" v-if='images.length > 0'> <!-- pass an expression in the string -->
                 <div class="ibd-item" v-for='latestImgs in images'>
+                    <div class="overlay"></div>
                     <div class="img">
                         <img :src="latestImgs.url" :alt="latestImgs.title" />
                     </div>

@@ -5,7 +5,7 @@
 body {
     margin: 0;
     min-height: 100vh;
-    background-color: #ffffff;
+    background-color: #edeae4;
     font-family: sans-serif;
     border-top: 3px solid blue;
 }
@@ -25,7 +25,7 @@ body {
 }
 
 .subheading {
-    color: gainsboro;
+    color: #c3c3c3;
     font-size: 16px;
     font-weight: 100;
     letter-spacing: 2px;
@@ -42,9 +42,17 @@ body {
 
 .ibd-item {
     background: white;
-    border-radius: 6px;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 3px 8px, rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
     overflow: hidden;
+    position: relative;
+}
+.ibd-item .overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 255, 0);
+    background: linear-gradient(180deg, rgba(0, 0, 255, 0) 50%, rgba(0, 0, 255, 0.6) 100%);
 }
 
 .ibd-item .img {
@@ -58,14 +66,69 @@ body {
 }
 
 .img-title {
-    padding: 15px;
-    border-top: 2px solid blue;
+    padding: 20px 15px;
+    position: absolute;
+    bottom: 0;
+    background: blue;
+    width: 50%;
 }
 .img-title h4 {
-    color: blue;
-    font-size: 21px;
-    font-weight: 400;
+    color: white;
+    font-size: 17px;
+    font-weight: 100;
     margin: 0;
+}
+
+form {
+    padding: 20px 0;
+}
+form input {
+    background: none;
+    border: none;
+    border-bottom: 1px solid blue;
+    color: blue;
+    font-size: 16px;
+}
+form input::placeholder {
+    color: rgba(0, 0, 255, 0.6);
+}
+form #file {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+    /* background: none;
+    border: none;
+    border-bottom: none;
+    color: #c3c3c3;
+    font-size: 12px;
+    font-weight: 100;
+    font-style: italic; */
+}
+#file + label {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: white;
+    background-color: black;
+    display: inline-block;
+}
+
+#file:focus + label,
+#file + label:hover {
+    background-color: red;
+}
+
+#file + label {
+    cursor: pointer; /* "hand" cursor */
+}
+#file:focus + label {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 5px;
+}
+#file + label * {
+    pointer-events: none;
 }
 
 /* -------------------------- MEDIA QUERIES - SMALLER SCREENS -------------------------*/

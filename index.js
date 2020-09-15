@@ -1,6 +1,10 @@
 // SERVER
 const express = require('express');
 const app = express();
+const multer = require('multer'); //npm package
+const uidSafe = require('uid-safe'); //npm package
+const path = require('path'); // core node module
+const { s3Url } = require('./config');
 
 app.use(express.static('./public'));
 app.use(express.static('./sql'));
@@ -8,26 +12,30 @@ app.use(express.static('./sql'));
 // BORROWED FROM PETITION
 const bodyParser = require('body-parser');
 const db = require('./sql/db');
-//const bc = require('./bc');
-//const cookieSession = require('cookie-session');
-//const csurf = require('csurf');
-
-/* app.use(
-    cookieSession({
-        secret: `something secret`,
-        maxAge: 1000 * 60 * 60 * 24, // after this amount of time the cookie will expire
-    })
-); */
-
+const s3 = require('./s3');
 app.use(bodyParser.urlencoded({ extended: false }));
-//app.use(csurf()); // the placement of this matters. Must come after express encoded and after cookie expression
-
-/* app.use(function (req, res, next) {
-    res.locals.csrfToken = req.csrfToken();
-    res.setHeader('x-frame-options', 'deny');
-    next();
-}); */
 // ---------------------------------------------------- //
+
+// multer is in charge of saving files
+// here we are telling it to upload to your files folder
+const diskStorage = multer.diskStorage({
+    destination: function (req, file, callback) {
+        callback(null, __dirname + '/uploads');
+    },
+    filename: function (req, file, callback) {
+        uidSafe(24).then(function (uid) {
+            callback(null, uid + path.extname(file.originalname));
+        });
+    },
+});
+
+// an object that has access to multer
+const uploader = multer({
+    storage: diskStorage,
+    limits: {
+        fileSize: 2097152,
+    },
+});
 
 app.get('/images', (req, res) => {
     console.log('get req for /images is working');
@@ -43,6 +51,43 @@ app.get('/images', (req, res) => {
         .catch((err) => {
             console.log('err in selectImages: ', err);
         });
+});
+
+app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
+    console.log('checking the post and uploader is working');
+    console.log('file: ', req.file);
+    console.log('input: ', req.body);
+
+    const filename = req.file.filename;
+    const url = `${s3Url}${filename}`;
+    // now we want to insert into database
+    // figure out the url
+    // we need to put in the full url of the aws file and the req.body details
+    // if something goes wrong in s3 then we DO NOT WANT a row in the body
+
+    // what should be in the sent response?
+    // should ordered in id chronological descendant
+    // use unshift() - put in beginning of array
+    // in axios when get result promise, wanna take the object we get back and unshift it
+
+    if (req.file) {
+        // you'll want to make a db insert for all the information
+        db.addImage(url, req.body.title, req.body.desc, req.body.username).then(({ rows }) => {
+            console.log('rows: ', rows);
+            console.log('rows[0]: ', rows[0]);
+            //res.json(rows[0]);
+            res.json({
+                image: rows[0],
+            });
+        });
+        /* res.json({
+            success: true,
+        }); */
+    } else {
+        res.json({
+            success: false,
+        });
+    }
 });
 
 app.listen(8080, () => console.log('Server listening...'));
