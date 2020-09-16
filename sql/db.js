@@ -42,10 +42,12 @@ module.exports.addComment = (username, comment, image_id) => {
     );
 };
 
-module.exports.getComments = () => {
+module.exports.getComments = (id) => {
     return db.query(
         `
         SELECT * FROM comments
-        ORDER BY id DESC;`
+        WHERE image_id = ($1)
+        ORDER BY id DESC;`,
+        [id]
     );
 };
