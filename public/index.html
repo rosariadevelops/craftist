@@ -1,38 +1,82 @@
 <!doctype html>
 <html>
 <head>
-    <title>Imageboard 2020</title>
+    <title>Craftist Gram</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/fonts.css">
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Thoughts</h1>
         <main>
+            <div class="title-container">
+                <h1 class="number">{{ numOfImages }}</h1>
+                <h1 class="title">craftist</h1>
+            </div>
+            
             <h2 class="subheading">{{ heading }}</h2>
-            <form>
-                <input v-modal="title" type="text" name="title" placeholder="Title">
-                <input v-modal="desc" type="text" name="desc" placeholder="Description">
-                <input v-modal="username" type="text" name="username" placeholder="Username">
-                <label for="file">Choose a file</label>
-                <input @change="handleChange" type="file" name="file" id="file" accept="image/*">
-                <button @click="handleClick">Submit</button>
-            </form>
-            <div class="ibd-container" v-if='images.length > 0'> <!-- pass an expression in the string -->
-                <div class="ibd-item" v-for='latestImgs in images'>
-                    <div class="overlay"></div>
-                    <div class="img">
-                        <img :src="latestImgs.url" :alt="latestImgs.title" />
-                    </div>
+                <div class="upload-form">
+                    <input v-model="title" type="text" name="title" placeholder="Title">
+                    <input v-model="desc" type="text" name="desc" placeholder="Description">
+                    <input v-model="username" type="text" name="username" placeholder="Username">
+                    <label for="file">Choose a file</label>
+                    <input @change="handleChange" type="file" name="file" id="file" accept="image/*">
+                    <button @click="handleClick">Upload</button>
+                </div>
+            <div class="ibd-container" v-if='images.length > 0'> <!-- can pass an expression in the string like so -->
+                <div class="ibd-card-ctr" v-for='imageData in images' @click="handleModal(imageData.id)">
                     <div class="img-title">
-                        <h4>{{ latestImgs.title }}</h4>
-                    </div>  
+                        <h4 class="num">n°00{{ imageData.id }}</h4>
+                        <h4>{{ imageData.title }}</h4>
+                    </div> 
+                    <div class="ibd-card">
+                        <div class="img">
+                            <img :src="imageData.url" :alt="imageData.title" />
+                        </div>
+                    </div>
                 </div>
             </div>
             <div v-else>No images to display.</div>
+            <modal-component :card-id="cardId" v-if='showModal' @close="closeModal"></modal-component>
         </main>
     </div>
+    <script id="modal-component" type="text/x-template">
+        <!-- Whatever is inside here must be wrapped in one element -->
+            <transition name="modal-fade">
+                <div class="modal-container">
+                    <div class="modal">
+                        <button type="button" class="close-btn" @click="closeModal">X</button>
+                        <div class="modal-img">
+                            <img :src="url" :alt="title" />
+                        </div>
+                        <div class="modal-img-title">
+                            <h4>{{ title }}</h4>
+                            <p>{{ desc }}</p>
+                            <p>Uploaded by {{ username }} on {{ date }}</p>
+                        </div>  
+                        <div class="comment-container">
+                            <div class="add-comment">
+                                <label for="comment">Comment</label>
+                                <input v-model="comment" type="text" name="comment" placeholder="Comment">
+                                <label for="uname">Username</label>
+                                <input v-model="uname" type="text" name="uname" placeholder="Username">
+                                <button @click="handleComments">Submit</button>
+                            </div>
+                            
+                            <div class="comments" v-if='comments.length > 0'> <!-- can pass an expression in the string like so -->
+                                <div class="comment-item" v-for='commentData in comments'>
+                                    <h4>{{ commentData.comment }}</h4>
+                                    <p>{{ commentData.username }}</p>
+                                    <p>{{ commentData.date }}</p>
+                                </div>
+                            </div>
+                            <div v-else>No comments to display.</div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        
+    </script>
     <script src="/js/vue.js"></script>
     <script src="/js/axios.min.js"></script>
     <script src="/js/script.js"></script>

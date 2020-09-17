@@ -31,10 +31,8 @@ exports.upload = (req, res, next) => {
     })
         .promise()
         .then(() => {
-            // what we get is a promise, not an object
-            // assuming it works, we get here
-            console.log('It worked!');
-            next(); //because this is a middleware function
+            console.log('It worked in S3!');
+            next();
         })
         .catch((err) => {
             console.log('Uh oh! Error: ', err);

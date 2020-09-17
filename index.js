@@ -8,6 +8,7 @@ const { s3Url } = require('./config');
 
 app.use(express.static('./public'));
 app.use(express.static('./sql'));
+app.use(express.json());
 
 // BORROWED FROM PETITION
 const bodyParser = require('body-parser');
@@ -16,8 +17,6 @@ const s3 = require('./s3');
 app.use(bodyParser.urlencoded({ extended: false }));
 // ---------------------------------------------------- //
 
-// multer is in charge of saving files
-// here we are telling it to upload to your files folder
 const diskStorage = multer.diskStorage({
     destination: function (req, file, callback) {
         callback(null, __dirname + '/uploads');
@@ -29,7 +28,6 @@ const diskStorage = multer.diskStorage({
     },
 });
 
-// an object that has access to multer
 const uploader = multer({
     storage: diskStorage,
     limits: {
@@ -38,11 +36,8 @@ const uploader = multer({
 });
 
 app.get('/images', (req, res) => {
-    console.log('get req for /images is working');
-    // we send the data back as json and then vue figures out what to do with it
     db.selectImages()
         .then((result) => {
-            console.log('res.rows: ', result.rows);
             let images = result.rows;
             res.json({
                 images,
@@ -54,40 +49,87 @@ app.get('/images', (req, res) => {
 });
 
 app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
-    console.log('checking the post and uploader is working');
-    console.log('file: ', req.file);
-    console.log('input: ', req.body);
-
     const filename = req.file.filename;
     const url = `${s3Url}${filename}`;
-    // now we want to insert into database
-    // figure out the url
-    // we need to put in the full url of the aws file and the req.body details
-    // if something goes wrong in s3 then we DO NOT WANT a row in the body
-
-    // what should be in the sent response?
-    // should ordered in id chronological descendant
-    // use unshift() - put in beginning of array
-    // in axios when get result promise, wanna take the object we get back and unshift it
 
     if (req.file) {
         // you'll want to make a db insert for all the information
-        db.addImage(url, req.body.title, req.body.desc, req.body.username).then(({ rows }) => {
-            console.log('rows: ', rows);
-            console.log('rows[0]: ', rows[0]);
-            //res.json(rows[0]);
-            res.json({
-                image: rows[0],
+        db.addImage(url, req.body.username, req.body.title, req.body.desc)
+            .then(({ rows }) => {
+                //console.log('rows[0]: ', rows[0]);
+                res.json({
+                    image: rows[0],
+                });
+            })
+            .catch((err) => {
+                console.log('err in addImage: ', err);
             });
-        });
-        /* res.json({
-            success: true,
-        }); */
     } else {
         res.json({
             success: false,
         });
     }
+});
+
+app.get('/image/:cardId', (req, res) => {
+    //console.log('modal req params: ', req.params);
+    const cardId = req.params.cardId;
+    //console.log('/:cardId: ', cardId);
+    db.renderModal(cardId)
+        .then((result) => {
+            //console.log('renderModal result: ', result);
+            const modalURL = result.rows[0].url;
+            const modalUsername = result.rows[0].username;
+            const modalTitle = result.rows[0].title;
+            const modalDesc = result.rows[0].description;
+            const modalDate = result.rows[0].created_at;
+            res.json({
+                modalURL,
+                modalUsername,
+                modalTitle,
+                modalDesc,
+                modalDate,
+            });
+        })
+        .catch((err) => {
+            console.log('err in renderModal: ', err);
+        });
+});
+
+app.get('/comments/:cardId', (req, res) => {
+    //console.log('/comments req.params: ', req.params);
+    //console.log('/comment cardId: ', req.params.cardId);
+    var cardId = req.params.cardId;
+    db.getComments(cardId)
+        .then((result) => {
+            //console.log('getComments result:', result);
+
+            var comments = result.rows;
+            res.json({
+                comments,
+            });
+        })
+        .catch((err) => {
+            console.log('err in getComments: ', err);
+        });
+});
+
+app.post('/comments', (req, res) => {
+    //console.log('req.body: ', req.body);
+    var username = req.body.uname;
+    var comment = req.body.comment;
+    var cardId = req.body.id;
+
+    db.addComment(username, comment, cardId)
+        .then(({ rows }) => {
+            //console.log('result: ', rows[0]);
+            res.json({
+                comments: rows[0],
+            });
+        })
+        .catch((err) => {
+            console.log('err in addComment: ', err);
+        });
 });
 
 app.listen(8080, () => console.log('Server listening...'));
