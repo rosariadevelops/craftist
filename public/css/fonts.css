@@ -33,3 +33,38 @@
     font-weight: normal;
     font-style: normal;
 }
+
+@font-face {
+    font-family: 'ResistSansText-Light';
+    src: url('../fonts/font.woff2') format('woff2'), url('webFonts/ResistSansText-Light/font.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'interbold';
+    src: url('../fonts/inter-bold-webfont.woff2') format('woff2'), url('../fonts/inter-bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'intermedium';
+    src: url('../fonts/inter-medium-webfont.woff2') format('woff2'), url('../fonts/inter-medium-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'interregular';
+    src: url('../fonts/inter-regular-webfont.woff2') format('woff2'), url('../fonts/inter-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'intersemi_bold';
+    src: url('../fonts/inter-semibold-webfont.woff2') format('woff2'), url('../fonts/inter-semibold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}

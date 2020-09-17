@@ -21,22 +21,25 @@
                     <input v-model="username" type="text" name="username" placeholder="Username">
                     <label for="file">Choose a file</label>
                     <input @change="handleChange" type="file" name="file" id="file" accept="image/*">
-                    <button @click="handleClick">Upload</button>
+                    <button @click="handleUpload">Upload</button>
                 </div>
-            <div class="ibd-container" v-if='images.length > 0'> <!-- can pass an expression in the string like so -->
-                <div class="ibd-card-ctr" v-for='imageData in images' @click="handleModal(imageData.id)">
-                    <div class="img-title">
-                        <h4 class="num">n°00{{ imageData.id }}</h4>
-                        <h4>{{ imageData.title }}</h4>
-                    </div> 
-                    <div class="ibd-card">
-                        <div class="img">
-                            <img :src="imageData.url" :alt="imageData.title" />
+            <div class="ibd-container" v-if='images.length > 0'> <!-- REMOVE V-IF FOR PART 4 / can pass an expression in the string like so -->
+                <div class="ibd-card-ctr" v-for='imageData in images' @click="handleModal(imageData.id)"> <!-- REMOVE CLICK HANDLER FOR PART 4 -->
+                    <a :href=" '#' + imageData.id "></a>
+                        <div class="img-title">
+                            <h4 class="num">n°00{{ imageData.id }}</h4>
+                            <h4>{{ imageData.title }}</h4>
+                        </div> 
+                        <div class="ibd-card">
+                            <div class="img">
+                                <img :src="imageData.url" :alt="imageData.title" />
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
             <div v-else>No images to display.</div>
+            <button id="load-more" @click="loadMore">More</button>
             <modal-component :card-id="cardId" v-if='showModal' @close="closeModal"></modal-component>
         </main>
     </div>
@@ -45,32 +48,37 @@
             <transition name="modal-fade">
                 <div class="modal-container">
                     <div class="modal">
-                        <button type="button" class="close-btn" @click="closeModal">X</button>
+                        <a class="close-btn" @click="closeModal">
+                            <span class="close-modal-left"></span>
+                            <span class="close-modal-right"></span>
+                        </a>
                         <div class="modal-img">
                             <img :src="url" :alt="title" />
                         </div>
-                        <div class="modal-img-title">
-                            <h4>{{ title }}</h4>
-                            <p>{{ desc }}</p>
-                            <p>Uploaded by {{ username }} on {{ date }}</p>
-                        </div>  
-                        <div class="comment-container">
-                            <div class="add-comment">
-                                <label for="comment">Comment</label>
-                                <input v-model="comment" type="text" name="comment" placeholder="Comment">
-                                <label for="uname">Username</label>
-                                <input v-model="uname" type="text" name="uname" placeholder="Username">
-                                <button @click="handleComments">Submit</button>
-                            </div>
-                            
-                            <div class="comments" v-if='comments.length > 0'> <!-- can pass an expression in the string like so -->
-                                <div class="comment-item" v-for='commentData in comments'>
-                                    <h4>{{ commentData.comment }}</h4>
-                                    <p>{{ commentData.username }}</p>
-                                    <p>{{ commentData.date }}</p>
+                        <div class="right">
+                            <div class="modal-img-title">
+                                <h2>{{ title }}</h2>
+                                <p class="craftist">{{ desc }}</p>
+                                <p class="meta">Uploaded by {{ username }} on {{ date }}</p>
+                            </div>  
+                            <div class="comment-container">
+                                <div class="add-comment">
+                                    <label for="comment">Comment</label>
+                                    <textarea v-model="comment" name="comment" placeholder="Add your comment here:"></textarea>
+                                    <label for="uname">Username</label>
+                                    <input v-model="uname" type="text" name="uname" placeholder="Username">
+                                    <button @click="handleComments">Submit</button>
                                 </div>
+                                
+                                <div class="comments" v-if='comments.length > 0'> <!-- can pass an expression in the string like so -->
+                                    <div class="comment-item" v-for='commentData in comments'>
+                                        <h4>{{ commentData.comment }}</h4>
+                                        <p>{{ commentData.username }}</p>
+                                        <p>{{ commentData.date }}</p>
+                                    </div>
+                                </div>
+                                <div class="no-comments" v-else>No comments to display.</div>
                             </div>
-                            <div v-else>No comments to display.</div>
                         </div>
                     </div>
                 </div>

@@ -1,4 +1,6 @@
 (function () {
+    //var lmButton = document.getElementById('load-more');
+
     Vue.component('modal-component', {
         template: '#modal-component',
         props: ['cardId'], // always an array
@@ -19,7 +21,7 @@
             var that = this;
             //console.log('handleModal that: ', that);
             axios
-                .get(`/comments/${that.cardId}`)
+                .get('/comments/' + that.cardId)
                 .then(function (res) {
                     //console.log('GET /comments result: ', res);
                     that.comments = res.data.comments;
@@ -29,7 +31,7 @@
                 });
 
             axios
-                .get(`/image/${that.cardId}`)
+                .get('/image/' + that.cardId)
                 .then(function (resp) {
                     //console.log('resp: ', resp.data);
                     that.title = resp.data.modalTitle;
@@ -90,23 +92,40 @@
             username: '',
             file: null,
             numOfImages: '',
+            lastImageId: '',
         },
         mounted: function () {
             var that = this;
             axios
                 .get('/images')
                 .then(function (res) {
-                    console.log('that: ', that);
                     that.images = res.data.images;
                     that.numOfImages = res.data.images.length;
+                    var lastImageShown = that.images.slice(-1)[0];
+                    that.lastImageId = lastImageShown.id;
+                    console.log('lastImageId: ', that.lastImageId);
                 })
                 .catch(function (err) {
                     console.log('err in GET /images: ', err);
                 });
+
+            /* var moreImages = {
+                lastImageId,
+            }; */
+
+            /* axios
+                .get('/images/more')
+                .then(function (res) {
+                    console.log('GET /images/more result: ', res);
+                    //that.comments = res.data.comments;
+                })
+                .catch(function (err) {
+                    console.log('err in GET /comments: ', err);
+                }); */
         },
 
         methods: {
-            handleClick: function (e) {
+            handleUpload: function (e) {
                 e.preventDefault;
                 //console.log('this: ', this);
                 // form data is exclusively for sending a file to the server
@@ -133,16 +152,53 @@
                 //console.log('e.target.file: ', e.target.files[0]);
                 this.file = e.target.files[0];
             },
+            // DELETE HANDLE MODAL FOR PART 4
             handleModal: function (id) {
                 this.showModal = true;
-                // how do we figure figure out the id of the card that was clicked on?
-                //console.log('id: ', id);
-                //console.log('this of component: ', this.cardId);
-                // axios to make a req to the server to get some data
                 this.cardId = id;
             },
             closeModal: function () {
                 this.showModal = false;
+            },
+            loadMore: function (e) {
+                e.preventDefault;
+                var that = this;
+                //console.log('lm that: ', that);
+                //var lastImageShown = that.images.slice(-1)[0];
+                //var lastImageId = lastImageShown.id;
+
+                /* axios
+                    .post('/images/more', moreImages)
+                    .then(function (res) {
+                        console.log('/images res: ', res);
+                        that.images = res.data.images;
+                        that.numOfImages = res.data.images.length;
+                    })
+                    .catch(function (err) {
+                        console.log('err in POST /images: ', err);
+                    }); */
+
+                //console.log('that.lastImageId: ', that.lastImageId);
+                /* var moreImages = {
+                    lastImageId: that.lastImageId,
+                }; */
+
+                axios
+                    .get('/images/' + that.lastImageId)
+                    .then(function (response) {
+                        console.log('post more response: ', response);
+                        var updateImages = response.data.newImages;
+                        console.log('updateImages[0]: ', updateImages[0]);
+                        console.log('updateImages[1]: ', updateImages[1]);
+                        console.log('updateImages[2]: ', updateImages[2]);
+                        that.images.push(updateImages[0]);
+                        that.images.push(updateImages[1]);
+                        that.images.push(updateImages[2]);
+                        console.log('response from GET more: ', that.images);
+                    })
+                    .catch(function (err) {
+                        console.log('err in comment POST /images: ', err);
+                    });
             },
         },
     }); // Closes Vue

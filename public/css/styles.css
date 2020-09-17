@@ -7,7 +7,7 @@ body {
     min-height: 100vh;
     background-color: #edeae4;
     color: #28282a;
-    font-family: 'nimbus_sans_lregular', Helvetica, Arial, sans-serif;
+    font-family: 'interregular', Helvetica, Arial, sans-serif;
 }
 body::before {
     content: '';
@@ -16,18 +16,20 @@ body::before {
     height: 3px;
     background: #28282a;
     display: block;
+    z-index: 1;
 }
 
 .container {
-    padding: 50px 5%;
+    padding: 20px;
 }
 
-.title-container {
-    display: flex;
+.number {
+    position: absolute;
 }
 
 .title {
-    margin: 0;
+    margin: 0 auto;
+    width: 100%;
     font-family: 'bw_beto_grandelight', serif;
     font-size: 70px;
     font-weight: 100;
@@ -54,12 +56,12 @@ body::before {
 
 .ibd-card {
     background: white;
-    border-radius: 2px;
     /* box-shadow: rgba(0, 0, 0, 0.1) 0px 3px 8px, rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
      */
     overflow: hidden;
     position: relative;
     padding-top: 100%;
+    cursor: pointer;
 }
 
 .ibd-card .img {
@@ -73,7 +75,7 @@ body::before {
 .ibd-card .img img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: fill;
 }
 
 .img-title {
@@ -100,27 +102,29 @@ body::before {
 .upload-form {
     margin-bottom: 50px;
 }
-form {
-    padding: 20px 0;
-}
-form input {
-    background: none;
-    border: none;
-    border-bottom: 1px solid blue;
-    color: blue;
+
+.upload-form input {
+    min-width: 150px;
+    background: transparent;
+    border: 1px solid;
+    padding: 10px;
     font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
 }
-form input::placeholder {
-    color: rgba(0, 0, 255, 0.6);
+.upload-form input:focus {
+    color: blue;
+    border: 1px solid blue;
+    outline: none;
 }
-/* form #file {
+.upload-form #file {
     width: 0.1px;
     height: 0.1px;
     opacity: 0;
     overflow: hidden;
     position: absolute;
     z-index: -1;
-    /* background: none;
+    background: none;
     border: none;
     border-bottom: none;
     color: #c3c3c3;
@@ -142,7 +146,7 @@ form input::placeholder {
 }
 
 #file + label {
-    cursor: pointer; /* "hand" cursor
+    cursor: pointer;
 }
 #file:focus + label {
     outline: 1px dotted #000;
@@ -150,7 +154,7 @@ form input::placeholder {
 }
 #file + label * {
     pointer-events: none;
-} */
+}
 
 /* -------------------------- IMAGE MODAL -------------------------*/
 .modal-fade-enter,
@@ -164,7 +168,7 @@ form input::placeholder {
 }
 
 .modal-container {
-    position: absolute;
+    position: fixed;
     background: rgba(40, 40, 42, 0.8);
     width: 100%;
     height: 100%;
@@ -175,23 +179,131 @@ form input::placeholder {
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1;
 }
 .modal {
     background: #edeae4;
     width: 100%;
     height: 100%;
     margin: 0 auto;
-    padding: 40px 20px;
     overflow: scroll;
+    display: flex;
 }
 .modal-img {
-    width: 70%;
-    margin: 20px auto;
+    width: 50%;
 }
 .modal-img img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
+.close-btn {
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 58px;
+    height: 58px;
+    z-index: 9;
+    cursor: pointer;
+}
+.close-btn span {
+    background: #28282a;
+    display: block;
+    width: 100%;
+    height: 2px;
+    top: 50%;
+    margin-top: -2px;
+    overflow: hidden;
+}
+.close-btn .close-modal-left {
+    transform: rotate(45deg) translate(20px, 20px);
+}
+.close-btn .close-modal-right {
+    transform: rotate(-45deg) translate(-20px, 20px);
+}
+
+.modal .right {
+    width: 50%;
+}
+
+.modal-img-title {
+    padding: 100px 20px 20px;
+}
+.modal-img-title h2 {
+    font-size: 50px;
+    line-height: 55px;
+    margin: 0;
+}
+.modal-img-title .craftist {
+    font-size: 50px;
+    line-height: 55px;
+    margin: 0;
+    font-family: 'bw_beto_grandelight', 'interregular', Helvetica, Arial, sans-serif;
+    letter-spacing: -1.5px;
+}
+.modal-img-title .meta {
+    margin: 17px 0 0;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+.comment-container {
+    padding: 50px 20px 20px;
+    display: flex;
+    flex-direction: column;
+}
+.add-comment {
+    display: flex;
+    flex-direction: column;
+}
+.no-comments {
+    font-style: italic;
+    font-size: 14px;
+    opacity: 0.7;
+    padding: 50px 0;
+}
+.comment-container label {
+    display: none;
+}
+.comment-container textarea {
+    width: 100%;
+    background: #edeae4;
+    border: 1px solid #28282a;
+    padding: 20px 10px;
+    min-height: 120px;
+    font-size: 16px;
+}
+
+.comment-container input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid;
+    padding: 20px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.comment-container textarea:focus,
+.comment-container input:focus {
+    color: blue;
+    border: 1px solid blue;
+    outline: none;
+}
+
+button {
+    border: 1px solid;
+    padding: 20px;
+    font-size: 16px;
+    width: 220px;
+    cursor: pointer;
+    margin: 20px 0 0 auto;
+    background: transparent;
+    text-transform: uppercase;
+    font-family: 'inter-semibold', 'interregular', Helvetica, Arial, sans-serif;
+    letter-spacing: 1px;
+}
 /* -------------------------- MEDIA QUERIES - SMALLER SCREENS -------------------------*/
 @media screen and (max-width: 768px) {
     .title {

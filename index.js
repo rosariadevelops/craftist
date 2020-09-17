@@ -38,7 +38,7 @@ const uploader = multer({
 app.get('/images', (req, res) => {
     db.selectImages()
         .then((result) => {
-            let images = result.rows;
+            var images = result.rows;
             res.json({
                 images,
             });
@@ -46,11 +46,58 @@ app.get('/images', (req, res) => {
         .catch((err) => {
             console.log('err in selectImages: ', err);
         });
+
+    /* if (!Array.prototype.last) {
+        Array.prototype.last = function () {
+            return this[this.length - 1];
+        };
+    } */
+
+    /* db.getMoreImages(lastId)
+        .then(({ rows }) => {
+            console.log('getMoreImages rows: ', rows);
+        })
+        .catch((err) => {
+            console.log('err in getMoreImages: ', err);
+        }); */
+});
+
+/* app.post('/images', (req, res) => {
+    console.log('/moreimages POST is working!');
+    console.log('/moreimages req.body: ', req.body);
+    var lastImageId = req.body.lastImageId;
+    //     //console.log('/moreimages lastImageId: ', lastImageId);
+
+    db.getMoreImages(lastImageId)
+        .then(({ rows }) => {
+            console.log('getMoreImages rows: ', rows);
+        })
+        .catch((err) => {
+            console.log('err in getMoreImages: ', err);
+        });
+}); */
+
+app.get('/images/:lastId', (req, res) => {
+    //console.log('/moreimages GET is working!');
+    //console.log('/:lastId req.params ', req.params);
+    var lastImageId = req.params.lastId;
+    console.log('/moreimages lastImageId: ', lastImageId);
+    db.getMoreImages(lastImageId)
+        .then(({ rows }) => {
+            console.log('getMoreImages rows: ', rows);
+            var newImages = rows;
+            res.json({
+                newImages,
+            });
+        })
+        .catch((err) => {
+            console.log('err in getMoreImages: ', err);
+        });
 });
 
 app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
-    const filename = req.file.filename;
-    const url = `${s3Url}${filename}`;
+    var filename = req.file.filename;
+    var url = `${s3Url}${filename}`;
 
     if (req.file) {
         // you'll want to make a db insert for all the information
@@ -73,16 +120,16 @@ app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
 
 app.get('/image/:cardId', (req, res) => {
     //console.log('modal req params: ', req.params);
-    const cardId = req.params.cardId;
+    var cardId = req.params.cardId;
     //console.log('/:cardId: ', cardId);
     db.renderModal(cardId)
         .then((result) => {
             //console.log('renderModal result: ', result);
-            const modalURL = result.rows[0].url;
-            const modalUsername = result.rows[0].username;
-            const modalTitle = result.rows[0].title;
-            const modalDesc = result.rows[0].description;
-            const modalDate = result.rows[0].created_at;
+            var modalURL = result.rows[0].url;
+            var modalUsername = result.rows[0].username;
+            var modalTitle = result.rows[0].title;
+            var modalDesc = result.rows[0].description;
+            var modalDate = result.rows[0].created_at;
             res.json({
                 modalURL,
                 modalUsername,
