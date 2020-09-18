@@ -99,10 +99,40 @@
                 .then(function (res) {
                     that.images = res.data.images;
                     that.numOfImages = res.data.images.length;
+                    checkScrollPosition();
                 })
                 .catch(function (err) {
                     console.log('err in GET /images: ', err);
                 });
+
+            // INFINITE SCROLL
+            function checkScrollPosition() {
+                var scrolledToBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight;
+
+                var lastImageShown = that.images.slice().pop();
+                var lastImageId = lastImageShown.id;
+
+                setTimeout(function () {
+                    if (scrolledToBottom) {
+                        axios
+                            .get('/images/' + lastImageId)
+                            .then(function (response) {
+                                var updateImages = response.data.newImages;
+
+                                for (var i = 0; i < updateImages.length; ++i) {
+                                    that.images.push(updateImages[i]);
+                                }
+                                checkScrollPosition();
+                                console.log('rock bottom');
+                            })
+                            .catch(function (err) {
+                                console.log('err in comment POST /images: ', err);
+                            });
+                    } else {
+                        checkScrollPosition();
+                    }
+                }, 200);
+            }
         },
 
         methods: {
@@ -141,7 +171,7 @@
             closeModal: function () {
                 this.showModal = false;
             },
-            loadMore: function (e) {
+            /* loadMore: function (e) {
                 e.preventDefault;
                 var that = this;
 
@@ -172,7 +202,7 @@
                     .catch(function (err) {
                         console.log('err in comment POST /images: ', err);
                     });
-            },
+            }, */
         },
     }); // Closes Vue
 })(); // IIFE
