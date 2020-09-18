@@ -122,7 +122,7 @@ app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
 app.get('/image/:cardId', (req, res) => {
     //console.log('modal req params: ', req.params);
     var cardId = req.params.cardId;
-    //console.log('/:cardId: ', cardId);
+    console.log('/:cardId: ', cardId);
     db.renderModal(cardId)
         .then((result) => {
             //console.log('renderModal result: ', result);
@@ -146,7 +146,7 @@ app.get('/image/:cardId', (req, res) => {
 
 app.get('/comments/:cardId', (req, res) => {
     //console.log('/comments req.params: ', req.params);
-    //console.log('/comment cardId: ', req.params.cardId);
+    console.log('/comment cardId: ', req.params.cardId);
     var cardId = req.params.cardId;
     db.getComments(cardId)
         .then((result) => {

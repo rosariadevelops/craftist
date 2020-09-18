@@ -24,8 +24,8 @@
                     <button @click="handleUpload">Upload</button>
                 </div>
             <div class="ibd-container" v-if='images.length > 0'> <!-- REMOVE V-IF FOR PART 4 / can pass an expression in the string like so -->
-                <div class="ibd-card-ctr" v-for='imageData in images' @click="handleModal(imageData.id)"> <!-- REMOVE CLICK HANDLER FOR PART 4 -->
-                    <a :href=" '#' + imageData.id "></a>
+                <div class="ibd-card-ctr" v-for='imageData in images'> <!-- REMOVE CLICK HANDLER FOR PART 4 @click="handleModal(imageData.id)" -->
+                    <a :href=" '#' + imageData.id ">
                         <div class="img-title">
                             <h4 class="num">n°00{{ imageData.id }}</h4>
                             <h4>{{ imageData.title }}</h4>
@@ -40,7 +40,7 @@
             </div>
             <div v-else>No images to display.</div>
             <!-- <button id="load-more" @click="loadMore">More</button> -->
-            <modal-component :card-id="cardId" v-if='showModal' @close="closeModal"></modal-component>
+            <modal-component :card-id="cardId" v-if='cardId' @close="closeModal"></modal-component>
         </main>
     </div>
     <script id="modal-component" type="text/x-template">

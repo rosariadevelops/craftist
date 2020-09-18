@@ -42,6 +42,36 @@
                     console.log('err in GET /images: ', err);
                 });
         },
+
+        watch: {
+            cardId: function () {
+                console.log('watcher has noticed imageId has changed');
+
+                var that = this;
+                axios
+                    .get('/comments/' + that.cardId)
+                    .then(function (res) {
+                        that.comments = res.data.comments;
+                    })
+                    .catch(function (err) {
+                        console.log('err in GET /comments: ', err);
+                    });
+
+                axios
+                    .get('/image/' + that.cardId)
+                    .then(function (resp) {
+                        that.title = resp.data.modalTitle;
+                        that.username = resp.data.modalUsername;
+                        that.desc = resp.data.modalDesc;
+                        that.url = resp.data.modalURL;
+                        that.date = resp.data.modalDate;
+                    })
+                    .catch(function (err) {
+                        console.log('err in GET /images: ', err);
+                    });
+            },
+        },
+
         // can add event listeners
         methods: {
             handleComments: function (e) {
@@ -70,6 +100,10 @@
                     });
             },
             closeModal: function (e) {
+                console.log('closeModal this: ', this);
+                //this.cardId = null;
+                location.hash = '';
+                location.hash.slice(1);
                 e.preventDefault();
                 this.$emit('close');
             },
@@ -82,8 +116,8 @@
             // props
             heading: 'Latest Images',
             images: [],
-            showModal: false,
-            cardId: null,
+            //showModal: false,
+            //cardId: null,
             // these data properties will store values of input fields
             title: '',
             desc: '',
@@ -91,6 +125,7 @@
             file: null,
             numOfImages: '',
             lastImageId: '',
+            cardId: location.hash.slice(1),
         },
         mounted: function () {
             var that = this;
@@ -132,45 +167,52 @@
                         checkScrollPosition();
                     }
                 }, 200);
-            }
+            } // closes checkScrollPosition()
+
+            window.addEventListener('hashchange', function () {
+                console.log('hash change has fired');
+                console.log('value: ', location.hash);
+                // how to target imageID:
+                that.cardId = location.hash.slice(1);
+            });
         },
 
         methods: {
             handleUpload: function (e) {
                 e.preventDefault;
-                //console.log('this: ', this);
                 // form data is exclusively for sending a file to the server
                 var formData = new FormData();
                 formData.append('title', this.title);
                 formData.append('desc', this.desc);
                 formData.append('username', this.username);
                 formData.append('file', this.file);
-                // now we want to send all this info to the server when we handleClick
+                // now we want to send all this info to the server when we handleUpload
                 var that = this;
                 axios
                     .post('/upload', formData)
                     .then(function (response) {
-                        //console.log('response: ', response.data.image);
                         var latest = response.data.image;
                         that.images.unshift(latest);
-                        //console.log('response from form POST /upload: ', response);
                     })
                     .catch(function (err) {
                         console.log('err in form POST /upload: ', err);
                     });
             },
+
             handleChange: function (e) {
-                //console.log('e.target.file: ', e.target.files[0]);
                 this.file = e.target.files[0];
             },
             // DELETE HANDLE MODAL FOR PART 4
-            handleModal: function (id) {
+            /* handleModal: function (id) {
                 this.showModal = true;
                 this.cardId = id;
-            },
+            }, */
+
             closeModal: function () {
-                this.showModal = false;
+                //this.showModal = false;
+                this.cardId = null;
             },
+
             /* loadMore: function (e) {
                 e.preventDefault;
                 var that = this;
