@@ -81,11 +81,12 @@ app.get('/images/:lastId', (req, res) => {
     //console.log('/moreimages GET is working!');
     //console.log('/:lastId req.params ', req.params);
     var lastImageId = req.params.lastId;
-    console.log('/moreimages lastImageId: ', lastImageId);
+
     db.getMoreImages(lastImageId)
         .then(({ rows }) => {
-            console.log('getMoreImages rows: ', rows);
+            //console.log('getMoreImages rows: ', rows);
             var newImages = rows;
+            //console.log('/moreimages newImages: ', newImages);
             res.json({
                 newImages,
             });

@@ -1,6 +1,4 @@
 (function () {
-    //var lmButton = document.getElementById('load-more');
-
     Vue.component('modal-component', {
         template: '#modal-component',
         props: ['cardId'], // always an array
@@ -101,27 +99,10 @@
                 .then(function (res) {
                     that.images = res.data.images;
                     that.numOfImages = res.data.images.length;
-                    var lastImageShown = that.images.slice(-1)[0];
-                    that.lastImageId = lastImageShown.id;
-                    console.log('lastImageId: ', that.lastImageId);
                 })
                 .catch(function (err) {
                     console.log('err in GET /images: ', err);
                 });
-
-            /* var moreImages = {
-                lastImageId,
-            }; */
-
-            /* axios
-                .get('/images/more')
-                .then(function (res) {
-                    console.log('GET /images/more result: ', res);
-                    //that.comments = res.data.comments;
-                })
-                .catch(function (err) {
-                    console.log('err in GET /comments: ', err);
-                }); */
         },
 
         methods: {
@@ -163,38 +144,30 @@
             loadMore: function (e) {
                 e.preventDefault;
                 var that = this;
-                //console.log('lm that: ', that);
-                //var lastImageShown = that.images.slice(-1)[0];
-                //var lastImageId = lastImageShown.id;
 
-                /* axios
-                    .post('/images/more', moreImages)
-                    .then(function (res) {
-                        console.log('/images res: ', res);
-                        that.images = res.data.images;
-                        that.numOfImages = res.data.images.length;
-                    })
-                    .catch(function (err) {
-                        console.log('err in POST /images: ', err);
-                    }); */
-
-                //console.log('that.lastImageId: ', that.lastImageId);
-                /* var moreImages = {
-                    lastImageId: that.lastImageId,
-                }; */
+                var lastImageShown = that.images.slice().pop();
+                //console.log('lastImageShown: ', lastImageShown);
+                var lastImageId = lastImageShown.id;
+                //console.log('lastImageId: ', lastImageId);
 
                 axios
-                    .get('/images/' + that.lastImageId)
+                    .get('/images/' + lastImageId)
                     .then(function (response) {
-                        console.log('post more response: ', response);
                         var updateImages = response.data.newImages;
-                        console.log('updateImages[0]: ', updateImages[0]);
-                        console.log('updateImages[1]: ', updateImages[1]);
-                        console.log('updateImages[2]: ', updateImages[2]);
-                        that.images.push(updateImages[0]);
-                        that.images.push(updateImages[1]);
-                        that.images.push(updateImages[2]);
-                        console.log('response from GET more: ', that.images);
+
+                        for (var i = 0; i < updateImages.length; ++i) {
+                            that.images.push(updateImages[i]);
+                        }
+                        //console.log('that.images: ', that.images);
+                        var lastLowestId = that.images.slice().pop();
+                        //console.log('lastLowestId.id: ', lastLowestId.lowestId);
+                        //console.log('lastImageId: ', lastImageId);
+                        if (lastImageId === lastLowestId.lowestId) {
+                            console.log('it is the same!');
+                            var lmButton = document.getElementById('load-more');
+                            lmButton.style.visibilty = 'hidden';
+                            lmButton.style.opacity = '0';
+                        }
                     })
                     .catch(function (err) {
                         console.log('err in comment POST /images: ', err);

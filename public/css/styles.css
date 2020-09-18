@@ -304,6 +304,11 @@ button {
     font-family: 'inter-semibold', 'interregular', Helvetica, Arial, sans-serif;
     letter-spacing: 1px;
 }
+
+#load-more {
+    margin: 40px auto;
+    display: block;
+}
 /* -------------------------- MEDIA QUERIES - SMALLER SCREENS -------------------------*/
 @media screen and (max-width: 768px) {
     .title {
