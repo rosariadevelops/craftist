@@ -13,15 +13,16 @@
                 comment: '',
                 uname: '',
                 comments: [],
+                next: '',
+                prev: '',
+                file: null,
             };
         },
         mounted: function () {
             var that = this;
-            //console.log('handleModal that: ', that);
             axios
                 .get('/comments/' + that.cardId)
                 .then(function (res) {
-                    //console.log('GET /comments result: ', res);
                     that.comments = res.data.comments;
                 })
                 .catch(function (err) {
@@ -37,6 +38,8 @@
                     that.desc = resp.data.modalDesc;
                     that.url = resp.data.modalURL;
                     that.date = resp.data.modalDate;
+                    that.next = resp.data.modalPrev;
+                    that.prev = resp.data.modalNext;
                 })
                 .catch(function (err) {
                     console.log('err in GET /images: ', err);
@@ -45,7 +48,7 @@
 
         watch: {
             cardId: function () {
-                console.log('watcher has noticed imageId has changed');
+                //console.log('watcher has noticed imageId has changed');
 
                 var that = this;
                 axios
@@ -65,6 +68,8 @@
                         that.desc = resp.data.modalDesc;
                         that.url = resp.data.modalURL;
                         that.date = resp.data.modalDate;
+                        that.next = resp.data.modalPrev;
+                        that.prev = resp.data.modalNext;
                     })
                     .catch(function (err) {
                         console.log('err in GET /images: ', err);
@@ -76,10 +81,7 @@
         methods: {
             handleComments: function (e) {
                 e.preventDefault;
-                //console.log('this: ', this);
-
                 var that = this;
-                //console.log('that: ', that);
 
                 var commentData = {
                     comment: that.comment,
@@ -90,40 +92,79 @@
                 axios
                     .post('/comments', commentData)
                     .then(function (response) {
-                        //console.log('post comment response: ', response.data.comments);
                         var latestComment = response.data.comments;
                         that.comments.unshift(latestComment);
-                        //console.log('response from form POST /upload: ', response);
                     })
                     .catch(function (err) {
                         console.log('err in comment POST /comment: ', err);
                     });
             },
+
             closeModal: function (e) {
-                console.log('closeModal this: ', this);
-                //this.cardId = null;
-                location.hash = '';
-                location.hash.slice(1);
                 e.preventDefault();
                 this.$emit('close');
+                history.replaceState(null, null, '');
+            },
+
+            deleteS3: function (e) {
+                this.file = e.target.files[0];
+            },
+
+            handleDelete: function (e) {
+                e.preventDefault;
+                var that = this;
+                console.log('this url: ', that.url);
+                // https://s3.amazonaws.com/spicedling/S4L3C6bXgxsw1AFQlm0x_3agPnsDkNUb.jpg
+                var urlString = that.url.toString();
+                console.log('urlString: ', urlString);
+                var filenameToUse = urlString.slice(36);
+                console.log('filename: ', filenameToUse);
+
+                var deleteData = {
+                    id: that.cardId,
+                    filename: filenameToUse,
+                };
+
+                axios
+                    .post('/delete', deleteData)
+                    .then(function (response) {
+                        console.log('delete response:', response);
+                        console.log('delete that:', that);
+                        console.log('delete this:', that.$parent.images);
+                        var imageArray = that.$parent.images;
+                        var deletedId = response.data.deleteConfirm;
+                        // SPLICE OUT OF ARRAY IF THE ID DELETED MATCHES
+                        for (var i = 0; i < imageArray.length; ++i) {
+                            //console.log('parentArray[1]: ', parentArray[i].id);
+                            //console.log('deletedId: ', deletedId.id);
+                            if (imageArray[i].id === imageArray.id) {
+                                console.log('deletedId: ', deletedId.id);
+                                console.log('parentArray[i]', imageArray[i]);
+                                console.log('[i]', i);
+                                //var sameIdItem = parentArray[i];
+                                imageArray.splice(i, 1);
+                            }
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log('err in comment POST /comment: ', err);
+                    });
             },
         },
     });
 
     new Vue({
-        el: 'main', // DOM elements outside of main will not be touched by Vue
+        el: 'main',
         data: {
             // props
             heading: 'Latest Images',
             images: [],
             //showModal: false,
             //cardId: null,
-            // these data properties will store values of input fields
             title: '',
             desc: '',
             username: '',
             file: null,
-            numOfImages: '',
             lastImageId: '',
             cardId: location.hash.slice(1),
         },
@@ -133,7 +174,6 @@
                 .get('/images')
                 .then(function (res) {
                     that.images = res.data.images;
-                    that.numOfImages = res.data.images.length;
                     checkScrollPosition();
                 })
                 .catch(function (err) {
@@ -170,9 +210,8 @@
             } // closes checkScrollPosition()
 
             window.addEventListener('hashchange', function () {
-                console.log('hash change has fired');
-                console.log('value: ', location.hash);
-                // how to target imageID:
+                //console.log('hash change has fired');
+                //console.log('value: ', location.hash);
                 that.cardId = location.hash.slice(1);
             });
         },
@@ -194,14 +233,29 @@
                         var latest = response.data.image;
                         that.images.unshift(latest);
                     })
+                    .then(function () {
+                        that.clearInputFields();
+                    })
                     .catch(function (err) {
                         console.log('err in form POST /upload: ', err);
                     });
             },
 
+            clearInputFields: function () {
+                document.getElementById('title').value = '';
+                document.getElementById('desc').value = '';
+                document.getElementById('username').value = '';
+                document.getElementById('file').value = '';
+                this.title = '';
+                this.desc = '';
+                this.file = null;
+                this.username = '';
+            },
+
             handleChange: function (e) {
                 this.file = e.target.files[0];
             },
+
             // DELETE HANDLE MODAL FOR PART 4
             /* handleModal: function (id) {
                 this.showModal = true;
@@ -211,6 +265,8 @@
             closeModal: function () {
                 //this.showModal = false;
                 this.cardId = null;
+                history.replaceState(null, null, '');
+                location.hash = '';
             },
 
             /* loadMore: function (e) {

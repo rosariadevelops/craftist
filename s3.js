@@ -35,7 +35,29 @@ exports.upload = (req, res, next) => {
             next();
         })
         .catch((err) => {
-            console.log('Uh oh! Error: ', err);
+            console.log('Uh oh! Error in putObject: ', err);
+            res.sendStatus(500); // it's ajax so send a status code
+        });
+};
+
+exports.delete = (req, res, next) => {
+    const { filename } = req.body;
+
+    if (req.body.filename === '') {
+        console.log("req.body.filename is empty and we can't continue!");
+        return res.sendStatus(500);
+    }
+    s3.deleteObject({
+        Bucket: 'spicedling',
+        Key: filename,
+    })
+        .promise()
+        .then(() => {
+            console.log('File was deleted from AWS!!');
+            next();
+        })
+        .catch((err) => {
+            console.log('Uh oh! Error in deleteObject: ', err);
             res.sendStatus(500); // it's ajax so send a status code
         });
 };

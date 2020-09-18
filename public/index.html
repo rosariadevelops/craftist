@@ -10,15 +10,14 @@
     <div class="container">
         <main>
             <div class="title-container">
-                <h1 class="number">{{ numOfImages }}</h1>
                 <h1 class="title">craftist</h1>
             </div>
             
             <h2 class="subheading">{{ heading }}</h2>
                 <div class="upload-form">
-                    <input v-model="title" type="text" name="title" placeholder="Title">
-                    <input v-model="desc" type="text" name="desc" placeholder="Description">
-                    <input v-model="username" type="text" name="username" placeholder="Username">
+                    <input v-model="title" type="text" name="title" id="title" placeholder="Title">
+                    <input v-model="desc" type="text" name="desc" id="desc" placeholder="Artist">
+                    <input v-model="username" type="text" name="username" id="username" placeholder="Username">
                     <label for="file">Choose a file</label>
                     <input @change="handleChange" type="file" name="file" id="file" accept="image/*">
                     <button @click="handleUpload">Upload</button>
@@ -52,6 +51,10 @@
                             <span class="close-modal-left"></span>
                             <span class="close-modal-right"></span>
                         </a>
+                        <div class="navigation">
+                            <a :href=" '#' + prev " class="prev">Prev</a>
+                            <a :href=" '#' + next " class="next">Next</a>
+                        </div>
                         <div class="modal-img">
                             <img :src="url" :alt="title" />
                         </div>
@@ -61,6 +64,9 @@
                                 <p class="craftist">{{ desc }}</p>
                                 <p class="meta">Uploaded by {{ username }} on {{ date }}</p>
                             </div>  
+                            <div class="delete">
+                                <button  @change="deleteS3" type="file" name="delete-file" @click="handleDelete">Delete Image</button>
+                            </div>
                             <div class="comment-container">
                                 <div class="add-comment">
                                     <label for="comment">Comment</label>

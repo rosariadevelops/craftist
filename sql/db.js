@@ -10,7 +10,7 @@ module.exports.selectImages = () => {
         `
         SELECT * FROM images
         ORDER BY id DESC
-        LIMIT 3;`
+        LIMIT 9;`
     );
 };
 
@@ -27,11 +27,28 @@ module.exports.addImage = (url, username, title, description) => {
 module.exports.renderModal = (id) => {
     return db.query(
         `
-        SELECT * FROM images
+        SELECT *, (
+            SELECT id FROM images
+            WHERE id < ($1)
+            ORDER BY id DESC
+            LIMIT 1) 
+            AS prev
+        , (
+            SELECT id FROM images
+            WHERE id > ($1)
+            ORDER BY id ASC
+            LIMIT 1)
+            AS next
+        FROM images
         WHERE id = ($1);`,
         [id]
     );
 };
+
+/* `
+        SELECT * FROM images
+        WHERE id = ($1);`,
+        [id] */
 
 module.exports.addComment = (username, comment, image_id) => {
     return db.query(
@@ -53,18 +70,6 @@ module.exports.getComments = (id) => {
     );
 };
 
-/* module.exports.getMoreImages = (lastId) => {
-    return db.query(
-        `
-        SELECT * FROM images
-        WHERE id < $1
-        ORDER BY id DESC
-        LIMIT 10
-        ;`,
-        [lastId]
-    );
-}; */
-
 module.exports.getMoreImages = (lastId) => {
     return db.query(
         `
@@ -77,5 +82,15 @@ module.exports.getMoreImages = (lastId) => {
         ORDER BY id DESC
         LIMIT 3;`,
         [lastId]
+    );
+};
+
+module.exports.deleteImage = (id) => {
+    return db.query(
+        `
+        DELETE FROM images
+        WHERE id = ($1)
+        RETURNING id;`,
+        [id]
     );
 };
