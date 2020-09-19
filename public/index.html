@@ -71,6 +71,14 @@
                                 <p class="craftist">{{ desc }}</p>
                                 <p class="meta">Uploaded by {{ username }} on {{ date }}</p>
                             </div>  
+                            <div class="modal-tags-container">
+                                <div class="tagslist" v-if='tags.length > 0'> <!-- can pass an expression in the string like so -->
+                                    <div class="tag-item" v-for='allTags in tags'>
+                                        <p>{{ allTags.tag }}</p>
+                                    </div>
+                                </div>
+                                <div class="no-tags" v-else></div>
+                            </div>
                             <div class="delete">
                                 <button  @change="deleteS3" type="file" name="delete-file" @click="handleDelete">Delete Image</button>
                             </div>

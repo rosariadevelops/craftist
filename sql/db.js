@@ -62,11 +62,6 @@ module.exports.renderModal = (id) => {
     );
 };
 
-/* `
-        SELECT * FROM images
-        WHERE id = ($1);`,
-        [id] */
-
 module.exports.addComment = (username, comment, image_id) => {
     return db.query(
         `
@@ -83,6 +78,15 @@ module.exports.getComments = (id) => {
         SELECT * FROM comments
         WHERE image_id = ($1)
         ORDER BY id DESC;`,
+        [id]
+    );
+};
+
+module.exports.getTags = (id) => {
+    return db.query(
+        `
+        SELECT tag FROM tags
+        WHERE image_id = ($1);`,
         [id]
     );
 };

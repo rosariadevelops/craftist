@@ -15,6 +15,7 @@
                 next: '',
                 prev: '',
                 file: null,
+                tags: [],
             };
         },
         mounted: function () {
@@ -31,14 +32,15 @@
             axios
                 .get('/image/' + that.cardId)
                 .then(function (resp) {
-                    //console.log('resp: ', resp.data);
-                    that.title = resp.data.modalTitle;
-                    that.username = resp.data.modalUsername;
-                    that.desc = resp.data.modalDesc;
-                    that.url = resp.data.modalURL;
-                    that.date = resp.data.modalDate;
-                    that.next = resp.data.modalPrev;
-                    that.prev = resp.data.modalNext;
+                    console.log('resp: ', resp);
+                    that.title = resp.data.title;
+                    that.username = resp.data.username;
+                    that.desc = resp.data.description;
+                    that.url = resp.data.url;
+                    that.date = resp.data.created_at;
+                    that.next = resp.data.prev;
+                    that.prev = resp.data.next;
+                    that.tags = resp.data.tags;
                 })
                 .catch(function (err) {
                     console.log('err in GET /images: ', err);
@@ -62,6 +64,7 @@
                 axios
                     .get('/image/' + that.cardId)
                     .then(function (resp) {
+                        console.log('/image modal response: ', resp);
                         that.title = resp.data.modalTitle;
                         that.username = resp.data.modalUsername;
                         that.desc = resp.data.modalDesc;
@@ -149,6 +152,10 @@
                         console.log('err in comment POST /comment: ', err);
                     });
             },
+
+            handleTags: function () {
+                //
+            },
         },
     });
 
@@ -176,16 +183,6 @@
                 .then(function (res) {
                     that.images = res.data.images;
                     checkScrollPosition();
-                })
-                .catch(function (err) {
-                    console.log('err in GET /images: ', err);
-                });
-
-            axios
-                .get('/tags')
-                .then(function (resp) {
-                    console.log('get tags working; ', resp);
-                    // that.images = res.data.images;
                 })
                 .catch(function (err) {
                     console.log('err in GET /images: ', err);
@@ -241,9 +238,12 @@
                         if (response.data.success) {
                             var latest = response.data.image;
                             that.images.unshift(latest);
+                            console.log('upload response: ', response);
+                            console.log('that.tags: ', that.tagsArr);
+                            var allTags = that.tagsArr;
 
                             var tagsData = {
-                                tagItem: that.tagItem,
+                                allTags,
                                 imageId: response.data.image.id,
                             };
 
@@ -264,15 +264,10 @@
                     });
             },
 
-            addTags: function (e) {
+            addTags: function () {
                 var that = this;
-                console.log('this: ', that);
-                console.log('that.tags: ', that.tagsArr);
                 var tagInput = document.getElementById('tagsinput');
-                console.log('e.target.value: ', e.target.value);
-                //this.tags.push(e.target.value);
-                //console.log('this.tags: ', that.tag);
-
+                console.log('that.tags: ', that.tagsArr);
                 console.log('that: ', that);
                 // take that.tagItem and add to tagsArr
                 var tagAdded = that.tagItem;
@@ -281,25 +276,24 @@
                 tagInput.value = '';
                 this.tagItem = '';
 
-                /* axios
-                    .post('/tags', tagsData)
-                    .then(function (resp) {
-                        console.log('response tags: ', resp);
-                        //var addTag = resp.data.tagItem;
-                        //that.tagsArr.push(addTag);
-                        console.log('that.tags: ', that.tagsArr);
-                    })
-                    .catch(function (err) {
-                        console.log('err in form POST /upload: ', err);
-                    }); */
+                /* function extract(item) {
+                    console.log(item);
+                }
+                that.tagsArr.forEach(extract); */
             },
 
             clearInputFields: function () {
-                document.getElementById('title').value = '';
+                /* document.getElementById('title').value = '';
                 document.getElementById('desc').value = '';
                 document.getElementById('username').value = '';
                 document.getElementById('file').value = '';
-                document.getElementById('tags').value = '';
+                document.getElementById('tagsinput').value = ''; */
+                const inputs = document.querySelectorAll('input');
+
+                inputs.forEach(function (input) {
+                    input.value = '';
+                });
+
                 this.title = '';
                 this.desc = '';
                 this.file = null;

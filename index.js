@@ -65,36 +65,39 @@ app.get('/images/:lastId', (req, res) => {
         });
 });
 
-app.get('/tags', (req, res) => {
+/* app.get('/tags', (req, res) => {
     db.showTags()
         .then((resulting) => {
             console.log('tags get result: ', resulting);
             /* var images = result.rows;
             res.json({
                 images,
-            }); */
+            }); 
         })
         .catch((err) => {
             console.log('err in selectImages: ', err);
         });
-});
+}); */
 
 app.post('/upload/tags', (req, res) => {
     console.log('tag post req: ', req.body);
-    var tag = req.body.tagItem;
+    var tagsArr = req.body.allTags;
     var image_id = req.body.imageId;
 
-    db.addTags(tag, image_id)
-        .then(({ rows }) => {
-            console.log('tags added: ', rows);
-            res.json({
-                tags: rows[0],
-                success: true,
+    for (var i = 0; i < tagsArr.length; ++i) {
+        console.log('tagsArr index.js i: ', tagsArr[i]);
+        db.addTags(tagsArr[i], image_id)
+            .then((result) => {
+                console.log('tags added result: ', result);
+                res.json({
+                    //tags: rows[0],
+                    success: true,
+                });
+            })
+            .catch((err) => {
+                console.log('err in addComment: ', err);
             });
-        })
-        .catch((err) => {
-            console.log('err in addComment: ', err);
-        });
+    }
 });
 
 app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
@@ -124,22 +127,21 @@ app.get('/image/:cardId', (req, res) => {
 
     db.renderModal(cardId)
         .then((result) => {
-            var modalURL = result.rows[0].url;
-            var modalUsername = result.rows[0].username;
-            var modalTitle = result.rows[0].title;
-            var modalDesc = result.rows[0].description;
-            var modalDate = result.rows[0].created_at;
-            var modalNext = result.rows[0].next;
-            var modalPrev = result.rows[0].prev;
+            db.getTags(cardId).then((rst) => {
+                console.log('getTags result: ', rst);
 
-            res.json({
-                modalURL,
-                modalUsername,
-                modalTitle,
-                modalDesc,
-                modalDate,
-                modalPrev,
-                modalNext,
+                var { url, username, title, description, created_at, next, prev } = result.rows[0];
+
+                res.json({
+                    url,
+                    username,
+                    title,
+                    description,
+                    created_at,
+                    next,
+                    prev,
+                    tags: rst.rows,
+                });
             });
         })
         .catch((err) => {
