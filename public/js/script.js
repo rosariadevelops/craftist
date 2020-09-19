@@ -109,7 +109,6 @@
             closeModal: function (e) {
                 e.preventDefault();
                 this.$emit('close');
-                history.replaceState(null, null, '');
             },
 
             deleteS3: function (e) {
@@ -338,7 +337,7 @@
             closeModal: function () {
                 //this.showModal = false;
                 this.cardId = null;
-                history.replaceState(null, null, '');
+                window.history.replaceState(null, null, '/');
                 location.hash = '';
             },
 
