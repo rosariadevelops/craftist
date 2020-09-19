@@ -4,7 +4,6 @@
         props: ['cardId'], // always an array
         data: function () {
             return {
-                heading: 'components are whack',
                 title: '',
                 desc: '',
                 date: '',
@@ -159,6 +158,8 @@
             // props
             heading: 'Latest Images',
             images: [],
+            tagsArr: [],
+            tagItem: '',
             //showModal: false,
             //cardId: null,
             title: '',
@@ -180,6 +181,20 @@
                     console.log('err in GET /images: ', err);
                 });
 
+            axios
+                .get('/tags')
+                .then(function (resp) {
+                    console.log('get tags working; ', resp);
+                    // that.images = res.data.images;
+                })
+                .catch(function (err) {
+                    console.log('err in GET /images: ', err);
+                });
+
+            window.addEventListener('hashchange', function () {
+                that.cardId = location.hash.slice(1);
+            });
+
             // INFINITE SCROLL
             function checkScrollPosition() {
                 var scrolledToBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight;
@@ -193,27 +208,20 @@
                             .get('/images/' + lastImageId)
                             .then(function (response) {
                                 var updateImages = response.data.newImages;
-
-                                for (var i = 0; i < updateImages.length; ++i) {
+                                that.images.push.apply(updateImages);
+                                /* for (var i = 0; i < updateImages.length; ++i) {
                                     that.images.push(updateImages[i]);
-                                }
+                                } */
                                 checkScrollPosition();
-                                console.log('rock bottom');
                             })
                             .catch(function (err) {
-                                console.log('err in comment POST /images: ', err);
+                                console.log('infinite scroll: ', err);
                             });
                     } else {
                         checkScrollPosition();
                     }
                 }, 200);
             } // closes checkScrollPosition()
-
-            window.addEventListener('hashchange', function () {
-                //console.log('hash change has fired');
-                //console.log('value: ', location.hash);
-                that.cardId = location.hash.slice(1);
-            });
         },
 
         methods: {
@@ -230,8 +238,23 @@
                 axios
                     .post('/upload', formData)
                     .then(function (response) {
-                        var latest = response.data.image;
-                        that.images.unshift(latest);
+                        if (response.data.success) {
+                            var latest = response.data.image;
+                            that.images.unshift(latest);
+
+                            var tagsData = {
+                                tagItem: that.tagItem,
+                                imageId: response.data.image.id,
+                            };
+
+                            console.log('tagsData: ', tagsData);
+                            axios.post('/upload/tags', tagsData).then(function (resp) {
+                                console.log('response tags: ', resp);
+                                var addTag = resp.data.tagItem;
+                                that.tagsArr.unshift(addTag);
+                                console.log('that.tags: ', that.tagsArr);
+                            });
+                        }
                     })
                     .then(function () {
                         that.clearInputFields();
@@ -241,15 +264,47 @@
                     });
             },
 
+            addTags: function (e) {
+                var that = this;
+                console.log('this: ', that);
+                console.log('that.tags: ', that.tagsArr);
+                var tagInput = document.getElementById('tagsinput');
+                console.log('e.target.value: ', e.target.value);
+                //this.tags.push(e.target.value);
+                //console.log('this.tags: ', that.tag);
+
+                console.log('that: ', that);
+                // take that.tagItem and add to tagsArr
+                var tagAdded = that.tagItem;
+                that.tagsArr.push(tagAdded);
+                // clear input field
+                tagInput.value = '';
+                this.tagItem = '';
+
+                /* axios
+                    .post('/tags', tagsData)
+                    .then(function (resp) {
+                        console.log('response tags: ', resp);
+                        //var addTag = resp.data.tagItem;
+                        //that.tagsArr.push(addTag);
+                        console.log('that.tags: ', that.tagsArr);
+                    })
+                    .catch(function (err) {
+                        console.log('err in form POST /upload: ', err);
+                    }); */
+            },
+
             clearInputFields: function () {
                 document.getElementById('title').value = '';
                 document.getElementById('desc').value = '';
                 document.getElementById('username').value = '';
                 document.getElementById('file').value = '';
+                document.getElementById('tags').value = '';
                 this.title = '';
                 this.desc = '';
                 this.file = null;
                 this.username = '';
+                this.tagsArr = [];
             },
 
             handleChange: function (e) {

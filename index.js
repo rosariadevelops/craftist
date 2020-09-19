@@ -41,6 +41,7 @@ app.get('/images', (req, res) => {
             var images = result.rows;
             res.json({
                 images,
+                success: true,
             });
         })
         .catch((err) => {
@@ -56,10 +57,43 @@ app.get('/images/:lastId', (req, res) => {
             var newImages = rows;
             res.json({
                 newImages,
+                success: true,
             });
         })
         .catch((err) => {
             console.log('err in getMoreImages: ', err);
+        });
+});
+
+app.get('/tags', (req, res) => {
+    db.showTags()
+        .then((resulting) => {
+            console.log('tags get result: ', resulting);
+            /* var images = result.rows;
+            res.json({
+                images,
+            }); */
+        })
+        .catch((err) => {
+            console.log('err in selectImages: ', err);
+        });
+});
+
+app.post('/upload/tags', (req, res) => {
+    console.log('tag post req: ', req.body);
+    var tag = req.body.tagItem;
+    var image_id = req.body.imageId;
+
+    db.addTags(tag, image_id)
+        .then(({ rows }) => {
+            console.log('tags added: ', rows);
+            res.json({
+                tags: rows[0],
+                success: true,
+            });
+        })
+        .catch((err) => {
+            console.log('err in addComment: ', err);
         });
 });
 
@@ -72,6 +106,7 @@ app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
             .then(({ rows }) => {
                 res.json({
                     image: rows[0],
+                    success: true,
                 });
             })
             .catch((err) => {

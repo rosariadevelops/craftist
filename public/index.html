@@ -20,6 +20,13 @@
                     <input v-model="username" type="text" name="username" id="username" placeholder="Username">
                     <label for="file">Choose a file</label>
                     <input @change="handleChange" type="file" name="file" id="file" accept="image/*">
+                    <div class="tags-container" >
+                        <input v-model="tagItem" v-on:keyup.enter="addTags" type="text" name="tagItem" id="tagsinput" placeholder="Add a tag and press Enter">
+                        <div class="tags" v-if='tagsArr.length > 0'>
+                            <p v-for='tag in tagsArr' class="tag">{{ tag }}</p>
+                        </div>
+                        <div v-else>No tags to display</div>
+                    </div>
                     <button @click="handleUpload">Upload</button>
                 </div>
             <div class="ibd-container" v-if='images.length > 0'> <!-- REMOVE V-IF FOR PART 4 / can pass an expression in the string like so -->

@@ -24,6 +24,23 @@ module.exports.addImage = (url, username, title, description) => {
     );
 };
 
+module.exports.showTags = () => {
+    return db.query(
+        `
+        SELECT * FROM tags;`
+    );
+};
+
+module.exports.addTags = (tag, image_id) => {
+    return db.query(
+        `
+        INSERT INTO tags (tag, image_id)
+        VALUES ($1, $2)
+        RETURNING *;`,
+        [tag, image_id]
+    );
+};
+
 module.exports.renderModal = (id) => {
     return db.query(
         `

@@ -19,3 +19,11 @@ CREATE TABLE comments(
     image_id INT NOT NULL UNIQUE REFERENCES images(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+DROP TABLE IF EXISTS tags;
+
+CREATE TABLE tags(
+    id SERIAL PRIMARY KEY,
+    tag VARCHAR(100), 
+    image_id INT NOT NULL REFERENCES images(id)
+);
