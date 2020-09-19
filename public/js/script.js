@@ -75,6 +75,7 @@
                         that.date = resp.data.created_at;
                         that.next = resp.data.prev;
                         that.prev = resp.data.next;
+                        that.filterImages = [];
                     })
                     .catch(function (err) {
                         console.log('err in GET /images: ', err);

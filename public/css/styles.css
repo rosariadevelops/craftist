@@ -353,6 +353,17 @@ button {
     cursor: pointer;
 }
 
+/* -------------------------- IMAGE MODAL FILTER -------------------------*/
+.filter-fade-enter,
+.filter-fade-leave-active {
+    opacity: 0;
+}
+
+.filter-fade-enter-active,
+.filter-fade-leave-active {
+    transition: opacity 0.5s ease;
+}
+
 /* -------------------------- MEDIA QUERIES - SMALLER SCREENS -------------------------*/
 @media screen and (max-width: 768px) {
     .title {

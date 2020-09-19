@@ -101,28 +101,29 @@
                                 <div class="no-comments" v-else>No comments to display.</div>
                             </div>
                         </div>
-
-                        <div class="filter-container" v-if='filterImages.length > 0'>
-                            <div class="filter title">
-                                    <h3 class="filter-heading">All images with tag:</h3>
-                                    <div class="filter-tag">{{ filterHeading }}</div>
-                            </div>
-                            <div class="ibd-container">
-                                <div class="ibd-card-ctr" v-for='imageData in filterImages'> 
-                                    <a :href=" '#' + imageData.id ">
-                                        <div class="img-title">
-                                            <h4 class="num">n°00{{ imageData.id }}</h4>
-                                            <h4>{{ imageData.title }}</h4>
-                                        </div> 
-                                        <div class="ibd-card">
-                                            <div class="img">
-                                                <img :src="imageData.url" :alt="imageData.title" />
-                                            </div>
-                                        </div>
-                                    </a>
+                        <transition name="filter-fade">
+                            <div class="filter-container" v-if='filterImages.length > 0'>
+                                <div class="filter title">
+                                        <h3 class="filter-heading">All images with tag:</h3>
+                                        <div class="filter-tag">{{ filterHeading }}</div>
                                 </div>
-                             </div>
-                        </div>
+                                <div class="ibd-container">
+                                    <div class="ibd-card-ctr" v-for='imageData in filterImages'> 
+                                        <a :href=" '#' + imageData.id ">
+                                            <div class="img-title">
+                                                <h4 class="num">n°00{{ imageData.id }}</h4>
+                                                <h4>{{ imageData.title }}</h4>
+                                            </div> 
+                                            <div class="ibd-card">
+                                                <div class="img">
+                                                    <img :src="imageData.url" :alt="imageData.title" />
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </transition>
                     </div>
                 </div>
             </transition>
