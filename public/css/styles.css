@@ -344,12 +344,13 @@ button {
 .tag-item {
     margin: 0 5px;
 }
-.tag-item p {
+.tag-item .tag {
     margin: 0;
     padding: 4px 14px;
     border-radius: 20px;
     font-size: 11px;
     border: 1px solid white;
+    cursor: pointer;
 }
 
 /* -------------------------- MEDIA QUERIES - SMALLER SCREENS -------------------------*/

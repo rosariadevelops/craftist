@@ -16,6 +16,9 @@
                 prev: '',
                 file: null,
                 tags: [],
+                tag: '',
+                filterImages: [],
+                filterHeading: '',
             };
         },
         mounted: function () {
@@ -65,13 +68,13 @@
                     .get('/image/' + that.cardId)
                     .then(function (resp) {
                         console.log('/image modal response: ', resp);
-                        that.title = resp.data.modalTitle;
-                        that.username = resp.data.modalUsername;
-                        that.desc = resp.data.modalDesc;
-                        that.url = resp.data.modalURL;
-                        that.date = resp.data.modalDate;
-                        that.next = resp.data.modalPrev;
-                        that.prev = resp.data.modalNext;
+                        that.title = resp.data.title;
+                        that.username = resp.data.username;
+                        that.desc = resp.data.description;
+                        that.url = resp.data.url;
+                        that.date = resp.data.created_at;
+                        that.next = resp.data.prev;
+                        that.prev = resp.data.next;
                     })
                     .catch(function (err) {
                         console.log('err in GET /images: ', err);
@@ -153,8 +156,28 @@
                     });
             },
 
-            handleTags: function () {
-                //
+            filterTags: function (tag) {
+                var that = this;
+                that.tag = tag;
+                that.filterHeading = tag;
+                console.log('that.tag: ', that.tag);
+                // get req for filter id
+
+                axios
+                    .get('/images/filter/' + that.tag)
+                    .then(function (resp) {
+                        console.log('/image filter response: ', resp);
+                        var renderFilteredImages = resp.data.tagResults;
+                        console.log('renderFilteredImages: ', renderFilteredImages);
+                        //that.filterImages.push.apply(renderFilteredImages);
+                        for (var i = 0; i < renderFilteredImages.length; ++i) {
+                            that.filterImages.push(renderFilteredImages[i]);
+                        }
+                        console.log('filterImages: ', that.filterImages);
+                    })
+                    .catch(function (err) {
+                        console.log('err in GET /images: ', err);
+                    });
             },
         },
     });

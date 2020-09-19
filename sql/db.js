@@ -115,3 +115,14 @@ module.exports.deleteImage = (id) => {
         [id]
     );
 };
+
+module.exports.filterTags = (tag) => {
+    return db.query(
+        `
+        SELECT * FROM images
+        LEFT JOIN tags
+        ON images.id = tags.image_id
+        WHERE tag = ($1);`,
+        [tag]
+    );
+};

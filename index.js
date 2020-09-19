@@ -65,20 +65,6 @@ app.get('/images/:lastId', (req, res) => {
         });
 });
 
-/* app.get('/tags', (req, res) => {
-    db.showTags()
-        .then((resulting) => {
-            console.log('tags get result: ', resulting);
-            /* var images = result.rows;
-            res.json({
-                images,
-            }); 
-        })
-        .catch((err) => {
-            console.log('err in selectImages: ', err);
-        });
-}); */
-
 app.post('/upload/tags', (req, res) => {
     console.log('tag post req: ', req.body);
     var tagsArr = req.body.allTags;
@@ -87,10 +73,10 @@ app.post('/upload/tags', (req, res) => {
     for (var i = 0; i < tagsArr.length; ++i) {
         console.log('tagsArr index.js i: ', tagsArr[i]);
         db.addTags(tagsArr[i], image_id)
-            .then((result) => {
-                console.log('tags added result: ', result);
+            .then(({ rows }) => {
+                console.log('tags added result: ', rows);
                 res.json({
-                    //tags: rows[0],
+                    tags: rows[0],
                     success: true,
                 });
             })
@@ -128,7 +114,7 @@ app.get('/image/:cardId', (req, res) => {
     db.renderModal(cardId)
         .then((result) => {
             db.getTags(cardId).then((rst) => {
-                console.log('getTags result: ', rst);
+                //console.log('getTags result: ', rst);
 
                 var { url, username, title, description, created_at, next, prev } = result.rows[0];
 
@@ -194,6 +180,23 @@ app.post('/delete', s3.delete, (req, res) => {
         })
         .catch((err) => {
             console.log('err in deleteImage: ', err);
+        });
+});
+
+app.get('/images/filter/:tag', (req, res) => {
+    console.log('filter req params: ', req.params);
+    var tag = req.params.tag;
+
+    db.filterTags(tag)
+        .then(({ rows }) => {
+            console.log('filter result: ', rows);
+            var tagResults = rows;
+            res.json({
+                tagResults,
+            });
+        })
+        .catch((err) => {
+            console.log('err in getComments: ', err);
         });
 });
 

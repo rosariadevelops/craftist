@@ -74,7 +74,7 @@
                             <div class="modal-tags-container">
                                 <div class="tagslist" v-if='tags.length > 0'> <!-- can pass an expression in the string like so -->
                                     <div class="tag-item" v-for='allTags in tags'>
-                                        <p>{{ allTags.tag }}</p>
+                                        <a class="tag" @click="filterTags(allTags.tag)">{{ allTags.tag }}</a>
                                     </div>
                                 </div>
                                 <div class="no-tags" v-else></div>
@@ -100,6 +100,28 @@
                                 </div>
                                 <div class="no-comments" v-else>No comments to display.</div>
                             </div>
+                        </div>
+
+                        <div class="filter-container" v-if='filterImages.length > 0'>
+                            <div class="filter title">
+                                    <h3 class="filter-heading">All images with tag:</h3>
+                                    <div class="filter-tag">{{ filterHeading }}</div>
+                            </div>
+                            <div class="ibd-container">
+                                <div class="ibd-card-ctr" v-for='imageData in filterImages'> 
+                                    <a :href=" '#' + imageData.id ">
+                                        <div class="img-title">
+                                            <h4 class="num">n°00{{ imageData.id }}</h4>
+                                            <h4>{{ imageData.title }}</h4>
+                                        </div> 
+                                        <div class="ibd-card">
+                                            <div class="img">
+                                                <img :src="imageData.url" :alt="imageData.title" />
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                             </div>
                         </div>
                     </div>
                 </div>
