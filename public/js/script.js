@@ -135,21 +135,11 @@
                     .then(function (response) {
                         console.log('delete response:', response);
                         console.log('delete that:', that);
-                        console.log('delete this:', that.$parent.images);
-                        var imageArray = that.$parent.images;
+                        console.log('delete this:', this);
+                        // var imageArray = that.$parent.images;
                         var deletedId = response.data.deleteConfirm;
-                        // SPLICE OUT OF ARRAY IF THE ID DELETED MATCHES
-                        for (var i = 0; i < imageArray.length; ++i) {
-                            //console.log('parentArray[1]: ', parentArray[i].id);
-                            //console.log('deletedId: ', deletedId.id);
-                            if (imageArray[i].id === imageArray.id) {
-                                console.log('deletedId: ', deletedId.id);
-                                console.log('parentArray[i]', imageArray[i]);
-                                console.log('[i]', i);
-                                //var sameIdItem = parentArray[i];
-                                imageArray.splice(i, 1);
-                            }
-                        }
+                        this.$emit(“delete”, this.id);
+                        this.closeModal();
                     })
                     .catch(function (err) {
                         console.log('err in comment POST /comment: ', err);
@@ -245,6 +235,28 @@
         },
 
         methods: {
+            showForm: function (e) {
+                e.preventDefault();
+                this.$emit('show');
+                var formFill = document.getElementById('upload-form');
+                formFill.style.visibility = 'visible';
+                formFill.style.opacity = '1';
+            },
+
+            hideForm: function () {
+                //e.preventDefault();
+                this.$emit('hide');
+                var formFill = document.getElementById('upload-form');
+                var tagsCtr = document.getElementById('showing-tags');
+                var ibdContainer = document.getElementsByClassName('ibd-container');
+                formFill.style.width = 30 + '%';
+                formFill.style.visibility = 'hidden';
+                formFill.style.opacity = '0';
+                ibdContainer.style.width = 70 + '%';
+                tagsCtr.style.visibility = 'hidden';
+                tagsCtr.style.opacity = '0';
+            },
+
             handleUpload: function (e) {
                 e.preventDefault;
                 // form data is exclusively for sending a file to the server
@@ -276,6 +288,7 @@
                                 var addTag = resp.data.tagItem;
                                 that.tagsArr.unshift(addTag);
                                 console.log('that.tags: ', that.tagsArr);
+                                this.hideForm();
                             });
                         }
                     })
@@ -337,6 +350,23 @@
                 this.file = null;
                 this.username = '';
                 this.tagsArr = [];
+            },
+
+            organiseDelete: function (e) {
+                e.preventDefault();
+                var that = this;
+                var imageArray = that.images;
+                for (var i = 0; i < imageArray.length; ++i) {
+                    //console.log('parentArray[1]: ', parentArray[i].id);
+                    //console.log('deletedId: ', deletedId.id);
+                    if (imageArray[i].id === imageArray.id) {
+                        console.log('deletedId: ', deletedId.id);
+                        console.log('parentArray[i]', imageArray[i]);
+                        console.log('[i]', i);
+                        //var sameIdItem = parentArray[i];
+                        imageArray.splice(i, 1);
+                    }
+                }
             },
 
             handleChange: function (e) {
