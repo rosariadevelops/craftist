@@ -3,8 +3,10 @@
 <head>
     <title>Craftist Gram</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/fonts.css">
+    <link href="node_modules/aos/dist/aos.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -13,24 +15,43 @@
                 <h1 class="title">craftist</h1>
             </div>
             
-            <h2 class="subheading">{{ heading }}</h2>
+            <div class="subheading">
+                <div>
+                    <span class="up"></span>
+                    <span class="across"></span>
+                </div>
+                <h2>{{ heading }}</h2>
+            </div>
                 <div class="upload-form">
-                    <input v-model="title" type="text" name="title" id="title" placeholder="Title">
-                    <input v-model="desc" type="text" name="desc" id="desc" placeholder="Artist">
-                    <input v-model="username" type="text" name="username" id="username" placeholder="Username">
-                    <label for="file">Choose a file</label>
-                    <input @change="handleChange" type="file" name="file" id="file" accept="image/*">
-                    <div class="tags-container" >
-                        <input v-model="tagItem" v-on:keyup.enter="addTags" type="text" name="tagItem" id="tagsinput" placeholder="Add a tag and press Enter">
-                        <div class="tags" v-if='tagsArr.length > 0'>
-                            <p v-for='tag in tagsArr' class="tag">{{ tag }}</p>
+                    <div class="all-inputs">
+                        <div class="file-details">
+                            <div class="choose-file">
+                                <label for="file">Choose a file</label>
+                                <input @change="handleChange" type="file" name="file" id="file" accept="image/*">
+                            </div>
+                            <div class="tags-container" >
+                                <div class="add-tags">
+                                    <input v-model="tagItem" @click="activateTagsBox" v-on:keyup.enter="addTags" type="text" name="tagItem" id="tagsinput" autocomplete="off"  placeholder="→ Click Add or hit Enter to add tag">
+                                    <button class="add" @click="addTagClick">Add</button>
+                                </div>
+                                <div id="showing-tags">
+                                    <div class="tags" v-if='tagsArr.length > 0'>
+                                        <p @click="removeTag" v-for='tag in tagsArr' class="tag">{{ tag }}</p>
+                                    </div>
+                                    <div class="no-tags" v-else><p>No tags to display</p></div>
+                                </div>
+                            </div>
                         </div>
-                        <div v-else>No tags to display</div>
+                        <div class="details">
+                            <input v-model="title" type="text" name="title" id="title" autocomplete="off" placeholder="→ Title">
+                            <input v-model="desc" type="text" name="desc" id="desc" autocomplete="off"  placeholder="→ Artist">
+                            <input v-model="username" type="text" name="username" id="username" autocomplete="off"  placeholder="→ Username">
+                        </div>
                     </div>
                     <button @click="handleUpload">Upload</button>
                 </div>
             <div class="ibd-container" v-if='images.length > 0'> <!-- REMOVE V-IF FOR PART 4 / can pass an expression in the string like so -->
-                <div class="ibd-card-ctr" v-for='imageData in images'> <!-- REMOVE CLICK HANDLER FOR PART 4 @click="handleModal(imageData.id)" -->
+                <div class="ibd-card-ctr" v-for='imageData in images' data-aos="fade-down"> <!-- REMOVE CLICK HANDLER FOR PART 4 @click="handleModal(imageData.id)" -->
                     <a :href=" '#' + imageData.id ">
                         <div class="img-title">
                             <h4 class="num">n°00{{ imageData.id }}</h4>
@@ -59,8 +80,14 @@
                             <span class="close-modal-right"></span>
                         </a>
                         <div class="navigation">
-                            <a :href=" '#' + prev " class="prev">Prev</a>
-                            <a :href=" '#' + next " class="next">Next</a>
+                            <a :href=" '#' + prev " class="prev">
+                                <span class="top">
+                                <span class="bottom">
+                            </a>
+                            <a :href=" '#' + next " class="next">
+                                <span class="top">
+                                <span class="bottom">
+                            </a>
                         </div>
                         <div class="modal-img">
                             <img :src="url" :alt="title" />
@@ -84,10 +111,10 @@
                             </div>
                             <div class="comment-container">
                                 <div class="add-comment">
-                                    <label for="comment">Comment</label>
-                                    <textarea v-model="comment" name="comment" placeholder="Add your comment here:"></textarea>
                                     <label for="uname">Username</label>
-                                    <input v-model="uname" type="text" name="uname" placeholder="Username">
+                                    <input v-model="uname" type="text" name="uname" placeholder="→ Username">
+                                    <label for="comment">Comment</label>
+                                    <textarea v-model="comment" name="comment" placeholder="→ Add your comment"></textarea>
                                     <button @click="handleComments">Submit</button>
                                 </div>
                                 
@@ -101,9 +128,14 @@
                                 <div class="no-comments" v-else>No comments to display.</div>
                             </div>
                         </div>
-                        <transition name="filter-fade">
+                    </div>
+                    <transition name="filter-fade">
                             <div class="filter-container" v-if='filterImages.length > 0'>
-                                <div class="filter title">
+                                <a class="close-btn" @click="closeModal">
+                                    <span class="close-modal-left"></span>
+                                    <span class="close-modal-right"></span>
+                                </a>
+                                <div class="filter-title">
                                         <h3 class="filter-heading">All images with tag:</h3>
                                         <div class="filter-tag">{{ filterHeading }}</div>
                                 </div>
@@ -124,7 +156,6 @@
                                 </div>
                             </div>
                         </transition>
-                    </div>
                 </div>
             </transition>
         
@@ -132,5 +163,9 @@
     <script src="/js/vue.js"></script>
     <script src="/js/axios.min.js"></script>
     <script src="/js/script.js"></script>
+    <script src="node_modules/aos/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
 </body>
 </html>

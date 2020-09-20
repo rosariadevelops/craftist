@@ -186,7 +186,7 @@
         el: 'main',
         data: {
             // props
-            heading: 'Latest Images',
+            heading: 'Upload an image',
             images: [],
             tagsArr: [],
             tagItem: '',
@@ -287,6 +287,12 @@
                     });
             },
 
+            activateTagsBox: function () {
+                var tagsBox = document.getElementById('showing-tags');
+                tagsBox.style.visibility = 'visible';
+                tagsBox.style.opacity = '1';
+            },
+
             addTags: function () {
                 var that = this;
                 var tagInput = document.getElementById('tagsinput');
@@ -298,11 +304,20 @@
                 // clear input field
                 tagInput.value = '';
                 this.tagItem = '';
+            },
 
-                /* function extract(item) {
-                    console.log(item);
-                }
-                that.tagsArr.forEach(extract); */
+            addTagClick: function (e) {
+                e.preventDefault();
+                var that = this;
+                that.addTags();
+            },
+
+            removeTag: function (e) {
+                e.preventDefault();
+                var that = this;
+                var tagItem = e.target;
+                console.log('e.target: ', e.target);
+                that.tagsArr.splice(tagItem);
             },
 
             clearInputFields: function () {
