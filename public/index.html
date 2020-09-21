@@ -73,9 +73,9 @@
                     </a>
                 </div>
             </div>
-            <div v-else>No images to display.</div>
+            <div class="no-images" v-else>No images to display.</div>
             <!-- <button id="load-more" @click="loadMore">More</button> -->
-            <modal-component :card-id="cardId" v-if='cardId' @close="closeModal"></modal-component>
+            <modal-component :card-id="cardId" v-if='cardId' @close="closeModal" @delete="organiseDelete(cardId)"></modal-component>
         </main>
     </div>
     <script id="modal-component" type="text/x-template">
@@ -152,15 +152,15 @@
                                 <div class="ibd-container">
                                     <div class="ibd-card-ctr" v-for='imageData in filterImages'> 
                                         <a :href=" '#' + imageData.id ">
-                                            <div class="img-title">
-                                                <h4 class="num">n°00{{ imageData.id }}</h4>
-                                                <h4>{{ imageData.title }}</h4>
-                                            </div> 
                                             <div class="ibd-card">
                                                 <div class="img">
                                                     <img :src="imageData.url" :alt="imageData.title" />
                                                 </div>
                                             </div>
+                                            <div class="img-title">
+                                                <h4 class="num">n°00{{ imageData.id }}</h4>
+                                                <h4>{{ imageData.title }}</h4>
+                                            </div> 
                                         </a>
                                     </div>
                                 </div>

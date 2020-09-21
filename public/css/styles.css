@@ -14,7 +14,7 @@ body::before {
     position: fixed;
     width: 100%;
     height: 1px;
-    background: #28282a;
+    background: transparent;
     display: block;
     z-index: 9999;
 }
@@ -83,7 +83,8 @@ main {
     transform: rotate(90deg);
 }
 
-.ibd-container {
+.ibd-container,
+.no-images {
     width: 100%;
     padding: 30px 30px 120px 480px;
     display: grid;
@@ -177,6 +178,7 @@ main {
     padding: 120px 0 0;
     border-right: 1px solid;
     border-left: 1px solid;
+    border-top: 1px solid;
 }
 
 .hide-form {
@@ -479,6 +481,11 @@ main {
     border-top-color: blue;
     border-bottom-color: blue;
 }
+.upload:active,
+.upload:visited,
+.upload:focus {
+    outline: none;
+}
 
 /* -------------------------- IMAGE MODAL -------------------------*/
 .modal-fade-enter,
@@ -604,6 +611,7 @@ main {
 }
 .comment-item {
     padding-left: 30px;
+    margin-bottom: 30px;
 }
 .comment-container label {
     display: none;
@@ -628,9 +636,18 @@ button {
     font-family: 'inter-semibold', 'interregular', Helvetica, Arial, sans-serif;
     letter-spacing: 1px;
 }
+button:focus,
+button:active,
+button:visited {
+    outline: none;
+}
 
 .add-comment button {
     width: 100%;
+    transition: 500ms ease;
+}
+.add-comment button:hover {
+    color: blue;
 }
 
 .delete {
@@ -656,6 +673,11 @@ button {
 }
 .delete button:hover {
     color: blue;
+}
+.delete button:focus,
+.delete button:active,
+.delete button:visited {
+    outline: none;
 }
 
 #load-more {
@@ -771,6 +793,12 @@ button {
 }
 .filter-container .ibd-container {
     margin-top: 30px;
+    width: 100%;
+    padding: 30px 30px 120px 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 60px 30px;
 }
 .filter-title {
     padding: 100px 0 20px;

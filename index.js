@@ -114,7 +114,8 @@ app.get('/image/:cardId', (req, res) => {
     db.renderModal(cardId)
         .then((result) => {
             db.getTags(cardId).then((rst) => {
-                //console.log('getTags result: ', rst);
+                console.log('getTags result: ', rst);
+                console.log('getTags result: ', result);
 
                 var { url, username, title, description, created_at, next, prev } = result.rows[0];
 

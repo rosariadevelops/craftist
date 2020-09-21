@@ -101,14 +101,23 @@
                         var latestComment = response.data.comments;
                         that.comments.unshift(latestComment);
                     })
+                    .then(function () {
+                        that.clearCommentFields();
+                    })
                     .catch(function (err) {
                         console.log('err in comment POST /comment: ', err);
                     });
             },
 
-            closeModal: function (e) {
-                e.preventDefault();
-                this.$emit('close');
+            clearCommentFields: function () {
+                const inputs = document.querySelectorAll('input');
+
+                inputs.forEach(function (input) {
+                    input.value = '';
+                });
+
+                this.uname = '';
+                this.comment = '';
             },
 
             deleteS3: function (e) {
@@ -121,9 +130,7 @@
                 console.log('this url: ', that.url);
                 // https://s3.amazonaws.com/spicedling/S4L3C6bXgxsw1AFQlm0x_3agPnsDkNUb.jpg
                 var urlString = that.url.toString();
-                console.log('urlString: ', urlString);
                 var filenameToUse = urlString.slice(36);
-                console.log('filename: ', filenameToUse);
 
                 var deleteData = {
                     id: that.cardId,
@@ -136,14 +143,18 @@
                         console.log('delete response:', response);
                         console.log('delete that:', that);
                         console.log('delete this:', this);
-                        // var imageArray = that.$parent.images;
-                        var deletedId = response.data.deleteConfirm;
-                        this.$emit(“delete”, this.id);
-                        this.closeModal();
                     })
                     .catch(function (err) {
                         console.log('err in comment POST /comment: ', err);
                     });
+                console.log('this after delete: ', this);
+                this.$emit('delete', this.cardId);
+                this.closeModal();
+            },
+
+            closeModal: function (e) {
+                //e.preventDefault();
+                this.$emit('close');
             },
 
             filterTags: function (tag) {
@@ -219,9 +230,6 @@
                             .then(function (response) {
                                 var updateImages = response.data.newImages;
                                 that.images.push.apply(updateImages);
-                                /* for (var i = 0; i < updateImages.length; ++i) {
-                                    that.images.push(updateImages[i]);
-                                } */
                                 checkScrollPosition();
                             })
                             .catch(function (err) {
@@ -288,7 +296,7 @@
                                 var addTag = resp.data.tagItem;
                                 that.tagsArr.unshift(addTag);
                                 console.log('that.tags: ', that.tagsArr);
-                                this.hideForm();
+                                //this.hideForm();
                             });
                         }
                     })
@@ -334,12 +342,10 @@
             },
 
             clearInputFields: function () {
-                /* document.getElementById('title').value = '';
-                document.getElementById('desc').value = '';
-                document.getElementById('username').value = '';
-                document.getElementById('file').value = '';
-                document.getElementById('tagsinput').value = ''; */
                 const inputs = document.querySelectorAll('input');
+                var tagsBox = document.getElementById('showing-tags');
+                tagsBox.style.visibility = 'hidden';
+                tagsBox.style.opacity = '0';
 
                 inputs.forEach(function (input) {
                     input.value = '';
@@ -352,19 +358,12 @@
                 this.tagsArr = [];
             },
 
-            organiseDelete: function (e) {
-                e.preventDefault();
-                var that = this;
-                var imageArray = that.images;
-                for (var i = 0; i < imageArray.length; ++i) {
-                    //console.log('parentArray[1]: ', parentArray[i].id);
-                    //console.log('deletedId: ', deletedId.id);
-                    if (imageArray[i].id === imageArray.id) {
-                        console.log('deletedId: ', deletedId.id);
-                        console.log('parentArray[i]', imageArray[i]);
-                        console.log('[i]', i);
-                        //var sameIdItem = parentArray[i];
-                        imageArray.splice(i, 1);
+            organiseDelete: function (id) {
+                console.log('organise delete that: ', this);
+                console.log('organise delete id: ', id);
+                for (var i = 0; i < this.images.length; ++i) {
+                    if (this.images[i].id === id) {
+                        this.images.splice(i, 1);
                     }
                 }
             },
@@ -380,7 +379,6 @@
             }, */
 
             closeModal: function () {
-                //this.showModal = false;
                 this.cardId = null;
                 window.history.replaceState(null, null, '/');
                 location.hash = '';
