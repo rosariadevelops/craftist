@@ -145,7 +145,7 @@
                         console.log('delete this:', this);
                     })
                     .catch(function (err) {
-                        console.log('err in comment POST /comment: ', err);
+                        console.log('err in delete POST /delete: ', err);
                     });
                 console.log('this after delete: ', this);
                 this.$emit('delete', this.cardId);
@@ -219,18 +219,30 @@
             // INFINITE SCROLL
             function checkScrollPosition() {
                 var scrolledToBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight;
-
+                //console.log('scrolledToBottom', scrolledToBottom);
                 var lastImageShown = that.images.slice().pop();
                 var lastImageId = lastImageShown.id;
+                //console.log('lastImageShown', lastImageShown);
+                //console.log('lastImageId', lastImageId);
 
                 setTimeout(function () {
                     if (scrolledToBottom) {
                         axios
                             .get('/images/' + lastImageId)
                             .then(function (response) {
-                                var updateImages = response.data.newImages;
+                                /* var updateImages = response.data.newImages;
                                 that.images.push.apply(updateImages);
+                                console.log('response', response);
+
+                                checkScrollPosition(); */
+
+                                var updateImages = response.data.newImages;
+
+                                for (var i = 0; i < updateImages.length; ++i) {
+                                    that.images.push(updateImages[i]);
+                                }
                                 checkScrollPosition();
+                                //console.log('rock bottom');
                             })
                             .catch(function (err) {
                                 console.log('infinite scroll: ', err);

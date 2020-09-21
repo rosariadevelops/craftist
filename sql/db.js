@@ -10,7 +10,7 @@ module.exports.selectImages = () => {
         `
         SELECT * FROM images
         ORDER BY id DESC
-        LIMIT 9;`
+        LIMIT 12;`
     );
 };
 

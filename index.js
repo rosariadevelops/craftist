@@ -51,10 +51,12 @@ app.get('/images', (req, res) => {
 
 app.get('/images/:lastId', (req, res) => {
     var lastImageId = req.params.lastId;
+    console.log('lastId: ', lastImageId);
 
     db.getMoreImages(lastImageId)
         .then(({ rows }) => {
             var newImages = rows;
+            console.log('newImages: ', newImages);
             res.json({
                 newImages,
                 success: true,
