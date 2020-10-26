@@ -22,7 +22,7 @@ exports.upload = (req, res, next) => {
     // need to use s3 object in here
     // aws calls files objects and file names are keys
     s3.putObject({
-        Bucket: 'spicedling',
+        Bucket: 'hey-berlin-get-bigger-bins',
         ACL: 'public-read', // access control list, tells amazon to make file publically available
         Key: filename,
         Body: fs.createReadStream(path), // amazon will pipe the stream for us
